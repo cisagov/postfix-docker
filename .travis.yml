@@ -7,7 +7,7 @@ env:
   global:
     - IMAGE_NAME=dhsncats/postfix
     - DOCKER_USER=felddy
-    - secure: >-
+    - secure: >- # DOCKER_PW
         R8uSOMb+2aZV/bTK8EU3L5sYqNUiVZpS3kBU0XvVW3rnZgdW1QIHwLU2VOAv9kgpw1e
         zXaAi3OPPboi3eMWTXGQGYM3prZePlpDk+cVwCZB5sQn4xw692p/VmNgnxrY9NTts0Y
         0qPSW9YdCEza8RLYbxaar8PGaLDdh5GwYBeBK8wrvd51PQa8J1IKDKRKfsbrKLRjHv8
