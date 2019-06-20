@@ -2,12 +2,29 @@
 
 [![Build Status](https://travis-ci.com/cisagov/postfix-docker.svg?branch=develop)](https://travis-ci.com/cisagov/postfix-docker)
 
+## Docker Image ##
+
+![MicroBadger Layers](https://img.shields.io/microbadger/layers/dhsncats/postfix.svg)
+![MicroBadger Size](https://img.shields.io/microbadger/image-size/dhsncats/postfix.svg)
+
 Creates a Docker container with an installation of the
 [postfix](http://postfix.org) MTA.  Additionally it has an IMAP
 server ([dovecot](https://dovecot.org)) for accessing the archvies
 of sent email.  All email is BCC'd to the `mailarchive` account.
 
 ## Usage ##
+
+### Install ###
+
+Pull `dhsncats/postfix` from the Docker repository:
+
+    docker pull dhsncats/postfix
+
+Or build `dhsncats/postfix` from source:
+
+    git clone https://github.com/cisagov/postfix-docker.git
+    cd postfix-docker
+    docker-compose build --build-arg VERSION=0.0.1
 
 A sample [docker composition](docker-compose.yml) is included in this repository.
 To build and start the container use the command: `docker-compose up`
