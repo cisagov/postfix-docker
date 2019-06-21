@@ -4,6 +4,7 @@
 from email.message import EmailMessage
 from imaplib import IMAP4_SSL
 import smtplib
+import time
 
 import pytest
 
@@ -16,6 +17,29 @@ ARCHIVE_PW = "foobar"
 TEST_SEND_USER = "testsender1"
 TEST_SEND_PW = "lemmy is god"
 IMAP_PORT = 1993
+READY_MESSAGE = "daemon started"
+
+
+def test_container_count(dockerc):
+    """Verify the test composition and container."""
+    # stopped parameter allows non-running containers in results
+    assert (
+        len(dockerc.containers(stopped=False)) == 1
+    ), "Wrong number of containers were started."
+
+
+def test_wait_for_ready(main_container):
+    """Wait for container to be ready."""
+    TIMEOUT = 10
+    for i in range(TIMEOUT):
+        if READY_MESSAGE in main_container.logs().decode("utf-8"):
+            break
+        time.sleep(1)
+    else:
+        raise Exception(
+            f"Container does not seem ready.  "
+            f'Expected "{READY_MESSAGE}" in the log within {TIMEOUT} seconds.'
+        )
 
 
 @pytest.mark.parametrize("port", [1025, 1587])
