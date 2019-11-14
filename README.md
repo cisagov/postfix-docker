@@ -1,11 +1,14 @@
 # postfix-docker 📮🐳 #
 
 [![Build Status](https://travis-ci.com/cisagov/postfix-docker.svg?branch=develop)](https://travis-ci.com/cisagov/postfix-docker)
+[![GitHub Build Status](https://github.com/cisagov/postfix-docker/workflows/build/badge.svg)](https://github.com/cisagov/postfix-docker/actions)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/cisagov/postfix-docker.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/postfix-docker/alerts/)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/cisagov/postfix-docker.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/postfix-docker/context:python)
 
 ## Docker Image ##
 
-![MicroBadger Layers](https://img.shields.io/microbadger/layers/dhsncats/postfix.svg)
-![MicroBadger Size](https://img.shields.io/microbadger/image-size/dhsncats/postfix.svg)
+![MicroBadger Layers](https://img.shields.io/microbadger/layers/cisagov/postfix.svg)
+![MicroBadger Size](https://img.shields.io/microbadger/image-size/cisagov/postfix.svg)
 
 Creates a Docker container with an installation of the
 [postfix](http://postfix.org) MTA.  Additionally it has an IMAP
@@ -16,11 +19,11 @@ of sent email.  All email is BCC'd to the `mailarchive` account.
 
 ### Install ###
 
-Pull `dhsncats/postfix` from the Docker repository:
+Pull `cisagov/postfix` from the Docker repository:
 
-    docker pull dhsncats/postfix
+    docker pull cisagov/postfix
 
-Or build `dhsncats/postfix` from source:
+Or build `cisagov/postfix` from source:
 
     git clone https://github.com/cisagov/postfix-docker.git
     cd postfix-docker
