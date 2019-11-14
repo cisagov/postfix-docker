@@ -42,7 +42,7 @@ RUN mv /etc/default/opendkim /etc/default/opendkim.orig
 RUN mv /etc/default/opendmarc /etc/default/opendmarc.orig
 
 COPY ./src/templates ./templates/
-COPY ./src/docker-entrypoint.sh ./src/version.txt .
+COPY ./src/docker-entrypoint.sh ./src/version.txt ./
 
 VOLUME ["/var/log", "/var/spool/postfix"]
 EXPOSE 25/TCP 587/TCP 993/TCP
