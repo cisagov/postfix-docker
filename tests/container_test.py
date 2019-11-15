@@ -3,21 +3,24 @@
 
 from email.message import EmailMessage
 from imaplib import IMAP4_SSL
+import os
 import smtplib
 import time
 
 import pytest
 
+ARCHIVE_PW = "foobar"
+ARCHIVE_USER = "mailarchive"
+DOMAIN = "example.com"
+IMAP_PORT = 1993
 MESSAGE = """
 This is a test message sent during the unit tests.
 """
-DOMAIN = "example.com"
-ARCHIVE_USER = "mailarchive"
-ARCHIVE_PW = "foobar"
-TEST_SEND_USER = "testsender1"
-TEST_SEND_PW = "lemmy is god"
-IMAP_PORT = 1993
 READY_MESSAGE = "daemon started"
+RELEASE_TAG = os.getenv("RELEASE_TAG")
+TEST_SEND_PW = "lemmy is god"
+TEST_SEND_USER = "testsender1"
+VERSION_FILE = "src/version.txt"
 
 
 def test_container_count(dockerc):
@@ -149,3 +152,28 @@ def test_imap_messages_cleared(username, password):
         message_count = int(data[0])
         print(f"inbox message count: {message_count}")
         assert message_count == 0, "Expected the inbox to be empty"
+
+
+@pytest.mark.skipif(
+    RELEASE_TAG in [None, ""], reason="this is not a release (RELEASE_TAG not set)"
+)
+def test_release_version():
+    """Verify that release tag version agrees with the module version."""
+    pkg_vars = {}
+    with open(VERSION_FILE) as f:
+        exec(f.read(), pkg_vars)  # nosec
+    project_version = pkg_vars["__version__"]
+    assert (
+        RELEASE_TAG == f"v{project_version}"
+    ), "RELEASE_TAG does not match the project version"
+
+
+def test_container_version_label_matches(main_container):
+    """Verify the container version label is the correct version."""
+    pkg_vars = {}
+    with open(VERSION_FILE) as f:
+        exec(f.read(), pkg_vars)  # nosec
+    project_version = pkg_vars["__version__"]
+    assert (
+        main_container.labels["version"] == project_version
+    ), "Dockerfile version label does not match project version"

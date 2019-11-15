@@ -13,9 +13,11 @@ secrets:
 services:
   postfix:
     build:
+      # VERSION must be specified on the command line:
+      # e.g., --build-arg VERSION=0.0.1
       context: .
       dockerfile: Dockerfile
-    image: dhsncats/postfix
+    image: cisagov/postfix
     init: true
     restart: always
     environment:
