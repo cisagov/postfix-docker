@@ -1,6 +1,5 @@
 # postfix-docker 📮🐳 #
 
-[![Build Status](https://travis-ci.com/cisagov/postfix-docker.svg?branch=develop)](https://travis-ci.com/cisagov/postfix-docker)
 [![GitHub Build Status](https://github.com/cisagov/postfix-docker/workflows/build/badge.svg)](https://github.com/cisagov/postfix-docker/actions)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/cisagov/postfix-docker.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/postfix-docker/alerts/)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/cisagov/postfix-docker.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/postfix-docker/context:python)
