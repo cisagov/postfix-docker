@@ -1,12 +1,14 @@
 #!/usr/bin/env pytest -vs
 """Tests for postfix container."""
 
+# Standard Python Libraries
 from email.message import EmailMessage
 from imaplib import IMAP4_SSL
 import os
 import smtplib
 import time
 
+# Third-Party Libraries
 import pytest
 
 ARCHIVE_PW = "foobar"
