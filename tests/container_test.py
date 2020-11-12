@@ -177,5 +177,5 @@ def test_container_version_label_matches(main_container):
         exec(f.read(), pkg_vars)  # nosec
     project_version = pkg_vars["__version__"]
     assert (
-        main_container.labels["version"] == project_version
+        main_container.labels["org.opencontainers.image.version"] == project_version
     ), "Dockerfile version label does not match project version"
