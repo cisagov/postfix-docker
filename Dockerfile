@@ -1,18 +1,14 @@
-ARG GIT_COMMIT=unspecified
-ARG GIT_REMOTE=unspecified
 ARG VERSION=unspecified
 
 FROM debian:buster-slim
 
-ARG GIT_COMMIT
-ARG GIT_REMOTE
 ARG VERSION
 
-LABEL git_commit=${GIT_COMMIT}
-LABEL git_remote=${GIT_REMOTE}
-LABEL maintainer="mark.feldhousen@trio.dhs.gov"
-LABEL vendor="Cyber and Infrastructure Security Agency"
-LABEL version=${VERSION}
+# For a list of pre-defined annotation keys and value types see:
+# https://github.com/opencontainers/image-spec/blob/master/annotations.md
+# Note: Additional labels are added by the build workflow.
+LABEL org.opencontainers.image.authors="mark.feldhousen@cisa.dhs.gov"
+LABEL org.opencontainers.image.vendor="Cyber and Infrastructure Security Agency"
 
 RUN apt-get update && \
 DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
