@@ -222,7 +222,7 @@ The following ports are exposed by this container:
 | 587 | Mail submission |
 | 993 | IMAPS |
 
-The sample [docker composition](docker-compose.yml) publishes the
+The sample [Docker composition](docker-compose.yml) publishes the
 exposed ports at 1025, 1587, and 1993.
 
 ## Environment variables ##
