@@ -225,6 +225,17 @@ The following ports are exposed by this container:
 The sample [Docker composition](docker-compose.yml) publishes the
 exposed ports at 1025, 1587, and 1993.
 
+## Ports ##
+
+The following ports are exposed by this container:
+
+| Port | Purpose        |
+|------|----------------|
+| 8080 | Example only; nothing is actually listening on the port |
+
+The sample [Docker composition](docker-compose.yml) publishes the
+exposed port at 8080.
+
 ## Environment variables ##
 
 ### Required ###
