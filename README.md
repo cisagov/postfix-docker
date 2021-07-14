@@ -189,7 +189,7 @@ environment variables.  See the
 ## Image tags ##
 
 The images of this container are tagged with [semantic
-versions](https://semver.org) of the underlying postfix project that they
+versions](https://semver.org) of the underlying Postfix project that they
 containerize.  It is recommended that most users use a version tag (e.g.
 `:0.0.4`).
 
