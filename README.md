@@ -196,7 +196,7 @@ containerize.  It is recommended that most users use a version tag (e.g.
 | Image:tag | Description |
 |-----------|-------------|
 |`cisagov/postfix:0.0.4`| An exact release version. |
-|`cisagov/postfix:0.4`| The most recent release matching the major and minor version numbers. |
+|`cisagov/postfix:0.0`| The most recent release matching the major and minor version numbers. |
 |`cisagov/postfix:0`| The most recent release matching the major version number. |
 |`cisagov/postfix:edge` | The most recent image built from a merge into the `develop` branch of this repository. |
 |`cisagov/postfix:nightly` | A nightly build of the `develop` branch of this repository. |
