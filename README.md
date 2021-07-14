@@ -243,8 +243,8 @@ exposed ports at 1025, 1587, and 1993, respectively.
 
 | Filename     | Purpose |
 |--------------|---------|
-| `fullchain.pem` | Public key for the postfix server. |
-| `privkey.pem` | Private key for the postfix server. |
+| `fullchain.pem` | Public key for the Postfix server. |
+| `privkey.pem` | Private key for the Postfix server. |
 | `users.txt` | Mail account credentials to create at startup. |
 
 ## Building from source ##
