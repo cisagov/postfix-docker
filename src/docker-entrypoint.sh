@@ -24,7 +24,7 @@ function generate_configs() {
   # configure opendmarc
   echo "Generating opendmarc configurations for ${PRIMARY_DOMAIN}"
   envsubst '\$PRIMARY_DOMAIN \$RELAY_IP' < templates/opendmarc.conf > /etc/opendmarc.conf
-  mkdir "/etc/opendmarc/"
+  mkdir -p "/etc/opendmarc/"
   echo "localhost" > /etc/opendmarc/ignore.hosts
   chown -R opendmarc:opendmarc /etc/opendmarc
   cp /etc/default/opendmarc.orig /etc/default/opendmarc
