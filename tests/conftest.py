@@ -15,19 +15,6 @@ def main_container(dockerc):
     return dockerc.containers(service_names=[MAIN_SERVICE_NAME], stopped=True)[0]
 
 
-<<<<<<< HEAD
-=======
-@pytest.fixture(scope="session")
-def version_container(dockerc):
-    """Return the version container from the Docker composition.
-
-    The version container should just output the version of its underlying contents.
-    """
-    # find the container by name even if it is stopped already
-    return dockerc.containers(service_names=[VERSION_SERVICE_NAME], stopped=True)[0]
-
-
->>>>>>> c6aa7f05b09191075d195f0743dd0f4d36f3920c
 def pytest_addoption(parser):
     """Add new commandline options to pytest."""
     parser.addoption(

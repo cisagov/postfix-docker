@@ -10,19 +10,10 @@
 [![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/cisagov/postfix)](https://hub.docker.com/r/cisagov/postfix)
 [![Platforms](https://img.shields.io/badge/platforms-amd64%20%7C%20arm%2Fv6%20%7C%20arm%2Fv7%20%7C%20arm64%20%7C%20ppc64le%20%7C%20s390x-blue)](https://hub.docker.com/r/cisagov/postfix/tags)
 
-<<<<<<< HEAD
 Creates a Docker container with an installation of the
 [postfix](http://postfix.org) MTA.  Additionally it has an IMAP
 server ([dovecot](https://dovecot.org)) for accessing the archvies
 of sent email.  All email is BCC'd to the `mailarchive` account.
-=======
-This is a Docker skeleton project that can be used to quickly get a
-new [cisagov](https://github.com/cisagov) GitHub Docker project
-started.  This skeleton project contains [licensing
-information](LICENSE), as well as [pre-commit hooks](https://pre-commit.com)
-and [GitHub Actions](https://github.com/features/actions) configurations
-appropriate for Docker containers and the major languages that we use.
->>>>>>> c6aa7f05b09191075d195f0743dd0f4d36f3920c
 
 ## Running ##
 
