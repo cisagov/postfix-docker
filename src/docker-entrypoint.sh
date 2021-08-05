@@ -4,7 +4,6 @@
 set -e
 #set -x
 
-
 function generate_configs() {
   # configure postfix
   echo "Generating postfix configurations for ${PRIMARY_DOMAIN}"
@@ -39,23 +38,21 @@ function generate_configs() {
   echo "All configurations generated for ${PRIMARY_DOMAIN}"
 }
 
-
 function generate_users() {
   echo "Generating users and passwords:"
   echo "--------------------------------------------"
-  while IFS=" " read -r username password || [ -n "$username" ]
-  do
-    if [ -z "$password" ]; then password=$(diceware -d-);
+  while IFS=" " read -r username password || [ -n "$username" ]; do
+    if [ -z "$password" ]; then
+      password=$(diceware -d-)
       echo -e "$username\t$password"
     else
       echo -e "$username\t<set by secrets file>"
     fi
-    adduser "$username" --quiet --disabled-password --shell /usr/sbin/nologin --gecos "" &>/dev/null || true
+    adduser "$username" --quiet --disabled-password --shell /usr/sbin/nologin --gecos "" &> /dev/null || true
     echo "$username:$password" | chpasswd || true
   done
   echo "--------------------------------------------"
 }
-
 
 if [ "$1" = 'postfix' ]; then
   echo "Starting mail server with:"
