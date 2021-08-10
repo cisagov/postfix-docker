@@ -1,8 +1,8 @@
 # postfix-docker 📮🐳 #
 
-[![GitHub Build Status](https://github.com/cisagov/postfix-docker/workflows/build/badge.svg)](https://github.com/cisagov/postfix-docker/actions)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/cisagov/postfix-docker.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/postfix-docker/alerts/)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/cisagov/postfix-docker.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/postfix-docker/context:python)
+[![GitHub Build Status](https://github.com/cisagov/postfix-docker/workflows/build/badge.svg)](https://github.com/cisagov/postfix-docker/actions/workflows/build.yml)
+[![CodeQL](https://github.com/cisagov/postfix-docker/workflows/CodeQL/badge.svg)](https://github.com/cisagov/postfix-docker/actions/workflows/codeql-analysis.yml)
+[![Known Vulnerabilities](https://snyk.io/test/github/cisagov/postfix-docker/badge.svg)](https://snyk.io/test/github/cisagov/postfix-docker)
 
 ## Docker Image ##
 
@@ -15,55 +15,279 @@ Creates a Docker container with an installation of the
 server ([dovecot](https://dovecot.org)) for accessing the archvies
 of sent email.  All email is BCC'd to the `mailarchive` account.
 
-## Usage ##
+## Running ##
 
-### Install ###
+### Running with Docker ###
 
-Pull `cisagov/postfix` from the Docker repository:
+To run the `cisagov/postfix` image via Docker:
 
-    docker pull cisagov/postfix
+```console
+docker run cisagov/postfix:0.0.4
+```
 
-Or build `cisagov/postfix` from source:
+### Running with Docker Compose ###
 
+1. Create a `docker-compose.yml` file similar to the one below to use [Docker Compose](https://docs.docker.com/compose/)
+or use the [sample `docker-compose.yml`](docker-compose.yml) provided with
+this repository.
+
+    ```yaml
+    ---
+    version: "3.7"
+
+    services:
+      postfix:
+        build:
+          # VERSION must be specified on the command line:
+          # e.g., --build-arg VERSION=0.0.4
+          context: .
+          dockerfile: Dockerfile
+        image: cisagov/postfix
+        init: true
+        restart: always
+        environment:
+          - PRIMARY_DOMAIN=example.com
+          - RELAY_IP=172.16.202.1/32
+        networks:
+          front:
+            ipv4_address: 172.16.202.2
+        ports:
+          - target: "25"
+            published: "1025"
+            protocol: tcp
+            mode: host
+          - target: "587"
+            published: "1587"
+            protocol: tcp
+            mode: host
+          - target: "993"
+            published: "1993"
+            protocol: tcp
+            mode: host
+
+    networks:
+      front:
+        driver: bridge
+        ipam:
+          driver: default
+          config:
+            - subnet: 172.16.202.0/24
+    ```
+
+1. Start the container and detach:
+
+    ```console
+    docker-compose up --detach
+    ```
+
+## Using secrets with your container ##
+
+This container also supports passing sensitive values via [Docker
+secrets](https://docs.docker.com/engine/swarm/secrets/).  Passing sensitive
+values like your credentials can be more secure using secrets than using
+environment variables.  See the
+[secrets](#secrets) section below for a table of all supported secret files.
+
+1. To use secrets, populate the following files in the `src/secrets` directory:
+
+- `fullchain.pem`
+- `privkey.pem`
+- `users.txt`
+
+1. Then add the secrets to your `docker-compose.yml` file:
+
+    ```yaml
+    ---
+    version: "3.7"
+
+    secrets:
+      fullchain_pem:
+        file: ./src/secrets/fullchain.pem
+      privkey_pem:
+        file: ./src/secrets/privkey.pem
+      users_txt:
+        file: ./src/secrets/users.txt
+
+    services:
+      postfix:
+        build:
+          # VERSION must be specified on the command line:
+          # e.g., --build-arg VERSION=0.0.4
+          context: .
+          dockerfile: Dockerfile
+        image: cisagov/postfix
+        init: true
+        restart: always
+        environment:
+          - PRIMARY_DOMAIN=example.com
+          - RELAY_IP=172.16.202.1/32
+        networks:
+          front:
+            ipv4_address: 172.16.202.2
+        ports:
+          - target: "25"
+            published: "1025"
+            protocol: tcp
+            mode: host
+          - target: "587"
+            published: "1587"
+            protocol: tcp
+            mode: host
+          - target: "993"
+            published: "1993"
+            protocol: tcp
+            mode: host
+        secrets:
+          - source: fullchain_pem
+            target: fullchain.pem
+          - source: privkey_pem
+            target: privkey.pem
+          - source: users_txt
+            target: users.txt
+
+    networks:
+      front:
+        driver: bridge
+        ipam:
+          driver: default
+          config:
+            - subnet: 172.16.202.0/24
+    ```
+
+## Updating your container ##
+
+### Docker Compose ###
+
+1. Pull the new image from Docker Hub:
+
+    ```console
+    docker-compose pull
+    ```
+
+1. Recreate the running container by following the [previous instructions](#running-with-docker-compose):
+
+    ```console
+    docker-compose up --detach
+    ```
+
+### Docker ###
+
+1. Stop the running container:
+
+    ```console
+    docker stop <container_id>
+    ```
+
+1. Pull the new image:
+
+    ```console
+    docker pull cisagov/postfix:0.0.4
+    ```
+
+1. Recreate and run the container by following the [previous instructions](#running-with-docker).
+
+## Image tags ##
+
+The images of this container are tagged with [semantic
+versions](https://semver.org) of the underlying Postfix project that they
+containerize.  It is recommended that most users use a version tag (e.g.
+`:0.0.4`).
+
+| Image:tag | Description |
+|-----------|-------------|
+|`cisagov/postfix:0.0.4`| An exact release version. |
+|`cisagov/postfix:0.0`| The most recent release matching the major and minor version numbers. |
+|`cisagov/postfix:0`| The most recent release matching the major version number. |
+|`cisagov/postfix:edge` | The most recent image built from a merge into the `develop` branch of this repository. |
+|`cisagov/postfix:nightly` | A nightly build of the `develop` branch of this repository. |
+|`cisagov/postfix:latest`| The most recent release image pushed to a container registry.  Pulling an image using the `:latest` tag [should be avoided.](https://vsupalov.com/docker-latest-tag/) |
+
+See the [tags tab](https://hub.docker.com/r/cisagov/postfix/tags) on Docker
+Hub for a list of all the supported tags.
+
+## Volumes ##
+
+| Mount point | Purpose |
+|-------------|---------|
+| `/var/log` | System logs |
+| `/var/spool/postfix` | Mail queues |
+
+## Ports ##
+
+The following ports are exposed by this container:
+
+| Port | Purpose        |
+|------|----------------|
+| 25 | SMTP relay |
+| 587 | Mail submission |
+| 993 | IMAPS |
+
+The sample [Docker composition](docker-compose.yml) publishes the
+exposed ports at 1025, 1587, and 1993, respectively.
+
+## Environment variables ##
+
+### Required ###
+
+| Name  | Purpose |
+|-------|---------|
+| `PRIMARY_DOMAIN` | The primary domain of the mail server. |
+
+### Optional ###
+
+| Name  | Purpose | Default |
+|-------|---------|---------|
+| `RELAY_IP` | An IP address that is allowed to relay mail without authentication. | `null` |
+
+## Secrets ##
+
+| Filename     | Purpose |
+|--------------|---------|
+| `fullchain.pem` | Public key for the Postfix server. |
+| `privkey.pem` | Private key for the Postfix server. |
+| `users.txt` | Mail account credentials to create at startup. |
+
+## Building from source ##
+
+Build the image locally using this git repository as the [build context](https://docs.docker.com/engine/reference/commandline/build/#git-repositories):
+
+```console
+docker build \
+  --build-arg VERSION=0.0.4 \
+  --tag cisagov/postfix:0.0.4 \
+  https://github.com/cisagov/postfix-docker.git#develop
+```
+
+## Cross-platform builds ##
+
+To create images that are compatible with other platforms, you can use the
+[`buildx`](https://docs.docker.com/buildx/working-with-buildx/) feature of
+Docker:
+
+1. Copy the project to your machine using the `Code` button above
+   or the command line:
+
+    ```console
     git clone https://github.com/cisagov/postfix-docker.git
     cd postfix-docker
-    docker-compose build --build-arg VERSION=0.0.1
+    ```
 
-A sample [docker composition](docker-compose.yml) is included in this repository.
-To build and start the container use the command: `docker-compose up`
+1. Create the `Dockerfile-x` file with `buildx` platform support:
 
-### Ports ###
+    ```console
+    ./buildx-dockerfile.sh
+    ```
 
-This container exposes the following ports:
+1. Build the image using `buildx`:
 
-- 25: `smtp`
-- 587: `submission`
-- 993: `imaps`
-
-The sample [docker composition](docker-compose.yml) publishes the
-exposed ports at 1025, 1587, and 1993.
-
-### Environment Variables ###
-
-Two environment variables are used to generate the configurations at runtime:
-
-- `PRIMARY_DOMAIN`: the domain of the mail server
-- `RELAY_IP`: (optional) an IP address that is allowed to relay mail without authentication
-
-### Secrets ###
-
-- `fullchain.pem`: public key
-- `privkey.pem`: private key
-- `users.txt`: account credentials to create at startup
-
-### Volumes ###
-
-Two optional volumes can be attached to this container to persist the
-mail spool directory, as well as the logging directory.  (Note that
-the mail logs are available using the docker log command.)
-
-- `/var/spool/postfix`: mail queues
-- `/var/log`: system logs
+    ```console
+    docker buildx build \
+      --file Dockerfile-x \
+      --platform linux/amd64 \
+      --build-arg VERSION=0.0.4 \
+      --output type=docker \
+      --tag cisagov/postfix:0.0.4 .
+    ```
 
 ## Contributing ##
 

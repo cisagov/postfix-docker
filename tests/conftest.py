@@ -10,7 +10,7 @@ MAIN_SERVICE_NAME = "postfix"
 
 @pytest.fixture(scope="session")
 def main_container(dockerc):
-    """Return the main container from the docker composition."""
+    """Return the main container from the Docker composition."""
     # find the container by name even if it is stopped already
     return dockerc.containers(service_names=[MAIN_SERVICE_NAME], stopped=True)[0]
 

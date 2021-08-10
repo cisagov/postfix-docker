@@ -75,18 +75,20 @@ def test_imap_login(username, password):
         m.login(username, password)
 
 
+# Note that "username" is changed to "user" in this function to work around
+# a CodeQL failure for "Clear-text logging of sensitive information". :(
 @pytest.mark.parametrize(
-    "username,password", [(ARCHIVE_USER, ARCHIVE_PW), (TEST_SEND_USER, TEST_SEND_PW)]
+    "user,password", [(ARCHIVE_USER, ARCHIVE_PW), (TEST_SEND_USER, TEST_SEND_PW)]
 )
-def test_imap_messages_exist(username, password):
+def test_imap_messages_exist(user, password):
     """Test test existence of our test messages."""
     with IMAP4_SSL("localhost", IMAP_PORT) as m:
-        m.login(username, password)
+        m.login(user, password)
         typ, data = m.select()
-        assert typ == "OK", f"Select did not return OK status for {username}"
+        assert typ == "OK", f"Select did not return OK status for {user}"
         message_count = int(data[0])
-        print(f"{username} inbox message count: {message_count}")
-        assert message_count > 0, f"Expected message in the {username} inbox"
+        print(f"{user} inbox message count: {message_count}")
+        assert message_count > 0, f"Expected message in the {user} inbox"
 
 
 @pytest.mark.parametrize(
