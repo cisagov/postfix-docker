@@ -48,7 +48,7 @@ function generate_users() {
     else
       echo -e "$username\t<set by secrets file>"
     fi
-    adduser "$username" --quiet --disabled-password --shell /usr/sbin/nologin --gecos "" --force-badname &> /dev/null || true
+    adduser "$username" --quiet --disabled-password --shell /usr/sbin/nologin --gecos "" --force-badname || true
     echo "$username:$password" | chpasswd || true
   done
   echo "--------------------------------------------"
