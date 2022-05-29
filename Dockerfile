@@ -1,6 +1,6 @@
 ARG VERSION=unspecified
 
-FROM debian:buster-slim
+FROM debian:10.12-slim
 
 ARG VERSION
 
