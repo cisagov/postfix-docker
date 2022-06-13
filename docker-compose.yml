@@ -1,6 +1,8 @@
 ---
 version: "3.7"
 
+# This Docker composition file is used to build and test the container
+
 secrets:
   fullchain_pem:
     file: ./src/secrets/fullchain.pem
