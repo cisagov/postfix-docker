@@ -1,6 +1,6 @@
 ARG VERSION=unspecified
 
-FROM debian:buster-slim
+FROM debian:bullseye-slim
 
 ARG VERSION
 
