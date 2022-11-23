@@ -18,6 +18,8 @@ repos:
         args:
           - --allow-missing-credentials
       - id: detect-private-key
+        # Ignore the fake private key in this repo
+        exclude: src/secrets/privkey.pem
       - id: end-of-file-fixer
         exclude: files/(issue|motd)
       - id: mixed-line-ending
