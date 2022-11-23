@@ -53,6 +53,12 @@ RUN adduser mailarchive --quiet --disabled-password \
     --shell /usr/sbin/nologin --gecos "Mail Archive"
 
 ###
+# Clean up aptitude cruft
+###
+RUN apt-get --quiet --quiet clean
+RUN rm -rf /var/lib/apt/lists/*
+
+###
 # Setup entrypoint
 ###
 USER root
