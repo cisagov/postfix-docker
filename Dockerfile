@@ -44,7 +44,9 @@ ENV DEPS \
 RUN DEBIAN_FRONTEND=noninteractive \
     apt-get install --quiet --quiet --yes \
     --no-install-recommends --no-install-suggests \
-    $DEPS
+    $DEPS \
+    && apt-get --quiet --quiet clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ###
 # Create a mailarchive user
