@@ -66,8 +66,8 @@ RUN mv /etc/default/opendmarc /etc/default/opendmarc.orig
 RUN mv /etc/dovecot/dovecot.conf /etc/dovecot/dovecot.conf.orig
 RUN mv /etc/postfix/master.cf /etc/postfix/master.cf.orig
 
-COPY ./src/templates ./templates/
-COPY ./src/docker-entrypoint.sh ./src/version.txt ./
+COPY src/templates templates/
+COPY src/docker-entrypoint.sh src/version.txt ./
 
 ###
 # Prepare to run
