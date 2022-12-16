@@ -70,7 +70,7 @@ COPY ./src/templates ./templates/
 COPY ./src/docker-entrypoint.sh ./src/version.txt ./
 
 ###
-# Prepare to Run
+# Prepare to run
 ###
 VOLUME ["/var/log", "/var/spool/postfix"]
 EXPOSE 25/TCP 587/TCP 993/TCP
