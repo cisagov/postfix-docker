@@ -248,7 +248,7 @@ jobs:
         run: mkdir -p dist
       - name: Build image
         id: docker_build
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           build-args: |
             VERSION=${{ needs.prepare.outputs.source_version }}
@@ -345,6 +345,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: [lint, prepare, test]
     if: github.event_name != 'pull_request'
+    # When Dependabot creates a PR it requires this permission in
+    # order to push Docker images to ghcr.io.
+    permissions:
+      packages: write
     steps:
       - name: Login to Docker Hub
         uses: docker/login-action@v2
@@ -376,7 +380,7 @@ jobs:
         run: ./buildx-dockerfile.sh
       - name: Build and push platform images to registries
         id: docker_build
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           build-args: |
             VERSION=${{ needs.prepare.outputs.source_version }}
