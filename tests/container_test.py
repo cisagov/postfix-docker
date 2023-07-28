@@ -29,7 +29,7 @@ def test_container_count(dockerc):
     """Verify the test composition and container."""
     # stopped parameter allows non-running containers in results
     assert (
-        len(dockerc.containers(stopped=False)) == 1
+        len(dockerc.compose.ps(all=True)) == 1
     ), "Wrong number of containers were started."
 
 
@@ -37,7 +37,7 @@ def test_wait_for_ready(main_container):
     """Wait for container to be ready."""
     TIMEOUT = 10
     for i in range(TIMEOUT):
-        if READY_MESSAGE in main_container.logs().decode("utf-8"):
+        if READY_MESSAGE in main_container.logs():
             break
         time.sleep(1)
     else:
@@ -179,5 +179,6 @@ def test_container_version_label_matches(main_container):
         exec(f.read(), pkg_vars)  # nosec
     project_version = pkg_vars["__version__"]
     assert (
-        main_container.labels["org.opencontainers.image.version"] == project_version
+        main_container.config.labels["org.opencontainers.image.version"]
+        == project_version
     ), "Dockerfile version label does not match project version"
