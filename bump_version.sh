@@ -29,10 +29,23 @@ HELP
   exit 1
 }
 
+function update_version {
+  # Comment out periods so they are interpreted as periods and don't
+  # just match any character
+  old_version_regex=${1//\./\\\.}
+
+  echo Changing version from "$1" to "$2"
+  tmp_file=/tmp/version.$$
+  sed "s/$old_version_regex/$2/" $VERSION_FILE > $tmp_file
+  mv $tmp_file $VERSION_FILE
+  sed "s/$old_version_regex/$2/" $README_FILE > $tmp_file
+  mv $tmp_file $README_FILE
+  git add $VERSION_FILE $README_FILE
+  git commit --message "$3"
+  git push
+}
+
 old_version=$(sed -n "s/^__version__ = \"\(.*\)\"$/\1/p" $VERSION_FILE)
-# Comment out periods so they are interpreted as periods and don't
-# just match any character
-old_version_regex=${old_version//\./\\\.}
 
 if [ $# -lt 1 ] || [ $# -gt 2 ]; then
   usage
@@ -43,15 +56,7 @@ else
         usage
       fi
       new_version=$(python -c "import semver; print(semver.bump_$1('$old_version'))")
-      echo Changing version from "$old_version" to "$new_version"
-      tmp_file=/tmp/version.$$
-      sed "s/$old_version_regex/$new_version/" $VERSION_FILE > $tmp_file
-      mv $tmp_file $VERSION_FILE
-      sed "s/$old_version_regex/$new_version/" $README_FILE > $tmp_file
-      mv $tmp_file $README_FILE
-      git add $VERSION_FILE $README_FILE
-      git commit -m"Bump version from $old_version to $new_version"
-      git push
+      update_version "$old_version" "$new_version" "Bump version from $old_version to $new_version"
       ;;
     build | prerelease)
       if [ $# -eq 2 ]; then
@@ -59,30 +64,14 @@ else
       else
         new_version=$(python -c "import semver; print(semver.bump_$1('$old_version'))")
       fi
-      echo Changing version from "$old_version" to "$new_version"
-      tmp_file=/tmp/version.$$
-      sed "s/$old_version_regex/$new_version/" $VERSION_FILE > $tmp_file
-      mv $tmp_file $VERSION_FILE
-      sed "s/$old_version_regex/$new_version/" $README_FILE > $tmp_file
-      mv $tmp_file $README_FILE
-      git add $VERSION_FILE $README_FILE
-      git commit -m"Bump version from $old_version to $new_version"
-      git push
+      update_version "$old_version" "$new_version" "Bump version from $old_version to $new_version"
       ;;
     finalize)
       if [ $# -ne 1 ]; then
         usage
       fi
       new_version=$(python -c "import semver; print(semver.finalize_version('$old_version'))")
-      echo Changing version from "$old_version" to "$new_version"
-      tmp_file=/tmp/version.$$
-      sed "s/$old_version_regex/$new_version/" $VERSION_FILE > $tmp_file
-      mv $tmp_file $VERSION_FILE
-      sed "s/$old_version_regex/$new_version/" $README_FILE > $tmp_file
-      mv $tmp_file $README_FILE
-      git add $VERSION_FILE $README_FILE
-      git commit -m"Finalize version from $old_version to $new_version"
-      git push
+      update_version "$old_version" "$new_version" "Finalize version from $old_version to $new_version"
       ;;
     show)
       echo "$old_version"
