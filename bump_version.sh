@@ -45,11 +45,10 @@ function update_version {
   git push
 }
 
-old_version=$(sed -n "s/^__version__ = \"\(.*\)\"$/\1/p" $VERSION_FILE)
-
 if [ $# -lt 1 ] || [ $# -gt 2 ]; then
   usage
 else
+  old_version=$(sed -n "s/^__version__ = \"\(.*\)\"$/\1/p" $VERSION_FILE)
   case $1 in
     major | minor | patch)
       if [ $# -ne 1 ]; then
