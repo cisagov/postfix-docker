@@ -42,7 +42,6 @@ function update_version {
   mv $tmp_file $README_FILE
   git add $VERSION_FILE $README_FILE
   git commit --message "$3"
-  git push
 }
 
 if [ $# -lt 1 ] || [ $# -gt 2 ]; then
