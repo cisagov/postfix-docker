@@ -6,8 +6,8 @@
 # and Lineage processes these changes.
 
 updates:
-  - package-ecosystem: docker
-    directory: /
+  - directory: /
+    package-ecosystem: docker
     schedule:
       interval: weekly
 
