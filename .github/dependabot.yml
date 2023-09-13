@@ -6,10 +6,10 @@
 # and Lineage processes these changes.
 
 updates:
-  - package-ecosystem: "docker"
-    directory: "/"
+  - package-ecosystem: docker
+    directory: /
     schedule:
-      interval: "weekly"
+      interval: weekly
 
   - directory: /
     ignore:
