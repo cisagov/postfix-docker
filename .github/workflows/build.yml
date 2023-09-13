@@ -206,6 +206,8 @@ jobs:
     #
     #     Scheduled builds are tagged with `:nightly`.
     name: "Prepare build variables"
+    needs:
+      - diagnostics
     runs-on: ubuntu-latest
     outputs:
       created: ${{ steps.prep.outputs.created }}
@@ -269,7 +271,9 @@ jobs:
     # as an artifact and loaded by the test job.
     name: "Build test image"
     runs-on: ubuntu-latest
-    needs: [prepare]
+    needs:
+      - diagnostics
+      - prepare
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -339,7 +343,9 @@ jobs:
     # Executes tests on the single-platform image created in the "build" job.
     name: "Test image"
     runs-on: ubuntu-latest
-    needs: [build]
+    needs:
+      - diagnostics
+      - build
     steps:
       - uses: actions/checkout@v4
       - id: setup-python
@@ -385,7 +391,11 @@ jobs:
     # triggering event is a pull request.
     name: "Build and push all platforms"
     runs-on: ubuntu-latest
-    needs: [lint, prepare, test]
+    needs:
+      - diagnostics
+      - lint
+      - prepare
+      - test
     if: github.event_name != 'pull_request'
     # When Dependabot creates a PR it requires this permission in
     # order to push Docker images to ghcr.io.
