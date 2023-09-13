@@ -55,7 +55,7 @@ jobs:
   lint:
     # Checks out the source and runs pre-commit hooks.  Detects coding errors
     # and style deviations.
-    name: "Lint sources"
+    name: Lint sources
     needs:
       - diagnostics
     runs-on: ubuntu-latest
@@ -205,7 +205,7 @@ jobs:
     #     with the value specified by the user.
     #
     #     Scheduled builds are tagged with `:nightly`.
-    name: "Prepare build variables"
+    name: Prepare build variables
     needs:
       - diagnostics
     outputs:
@@ -269,7 +269,7 @@ jobs:
   build:
     # Builds a single test image for the native platform.  This image is saved
     # as an artifact and loaded by the test job.
-    name: "Build test image"
+    name: Build test image
     needs:
       - diagnostics
       - prepare
@@ -341,7 +341,7 @@ jobs:
         if: env.RUN_TMATE
   test:
     # Executes tests on the single-platform image created in the "build" job.
-    name: "Test image"
+    name: Test image
     needs:
       - diagnostics
       - build
@@ -390,7 +390,7 @@ jobs:
     # image's description to Docker Hub.  This job is skipped when the
     # triggering event is a pull request.
     if: github.event_name != 'pull_request'
-    name: "Build and push all platforms"
+    name: Build and push all platforms
     needs:
       - diagnostics
       - lint
