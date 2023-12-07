@@ -223,7 +223,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Gather repository metadata
         id: repo
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const repo = await github.rest.repos.get(context.repo)
@@ -304,7 +304,7 @@ jobs:
         run: mkdir -p dist
       - name: Build image
         id: docker_build
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           build-args: |
             VERSION=${{ needs.prepare.outputs.source_version }}
@@ -313,6 +313,11 @@ jobs:
           context: .
           file: ./Dockerfile
           outputs: type=docker,dest=dist/image.tar
+          # Uncomment the following option if you are building an image for use
+          # on Google Cloud Run or AWS Lambda. The current default image output
+          # is unable to run on either. Please see the following issue for more
+          # information: https://github.com/docker/buildx/issues/1533
+          # provenance: false
           tags: ${{ env.IMAGE_NAME }}:latest  # not to be pushed
           # For a list of pre-defined annotation keys and value types see:
           # https://github.com/opencontainers/image-spec/blob/master/annotations.md
@@ -452,7 +457,7 @@ jobs:
         run: ./buildx-dockerfile.sh
       - name: Build and push platform images to registries
         id: docker_build
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           build-args: |
             VERSION=${{ needs.prepare.outputs.source_version }}
@@ -461,6 +466,11 @@ jobs:
           context: .
           file: ./Dockerfile-x
           platforms: ${{ env.PLATFORMS }}
+          # Uncomment the following option if you are building an image for use
+          # on Google Cloud Run or AWS Lambda. The current default image output
+          # is unable to run on either. Please see the following issue for more
+          # information: https://github.com/docker/buildx/issues/1533
+          # provenance: false
           push: true
           tags: ${{ needs.prepare.outputs.tags }}
           # For a list of pre-defined annotation keys and value types see:
