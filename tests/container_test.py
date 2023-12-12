@@ -27,7 +27,7 @@ VERSION_FILE = "src/version.txt"
 
 def test_container_count(dockerc):
     """Verify the test composition and container."""
-    # stopped parameter allows non-running containers in results
+    # all parameter allows non-running containers in results
     assert (
         len(dockerc.compose.ps(all=True)) == 1
     ), "Wrong number of containers were started."

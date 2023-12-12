@@ -35,15 +35,39 @@ env:
   RUN_TMATE: ${{ secrets.RUN_TMATE }}
 
 jobs:
+  diagnostics:
+    name: Run diagnostics
+    runs-on: ubuntu-latest
+    steps:
+      # Note that a duplicate of this step must be added at the top of
+      # each job.
+      - id: harden-runner
+        name: Harden the runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+      - id: github-status
+        name: Check GitHub status
+        uses: crazy-max/ghaction-github-status@v3
+      - id: dump-context
+        name: Dump context
+        uses: crazy-max/ghaction-dump-context@v2
   lint:
     # Checks out the source and runs pre-commit hooks.  Detects coding errors
     # and style deviations.
-    name: "Lint sources"
+    name: Lint sources
+    needs:
+      - diagnostics
     runs-on: ubuntu-latest
     steps:
+      - id: harden-runner
+        name: Harden the runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
       - id: setup-env
         uses: cisagov/setup-env-github-action@develop
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - id: setup-python
         uses: actions/setup-python@v4
         with:
@@ -104,10 +128,25 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: ${{ steps.setup-env.outputs.terraform-version }}
+      - name: Install go-critic
+        env:
+          PACKAGE_URL: github.com/go-critic/go-critic/cmd/gocritic
+          PACKAGE_VERSION: ${{ steps.setup-env.outputs.go-critic-version }}
+        run: go install ${PACKAGE_URL}@${PACKAGE_VERSION}
+      - name: Install gosec
+        env:
+          PACKAGE_URL: github.com/securego/gosec/v2/cmd/gosec
+          PACKAGE_VERSION: ${{ steps.setup-env.outputs.gosec-version }}
+        run: go install ${PACKAGE_URL}@${PACKAGE_VERSION}
       - name: Install shfmt
         env:
           PACKAGE_URL: mvdan.cc/sh/v3/cmd/shfmt
           PACKAGE_VERSION: ${{ steps.setup-env.outputs.shfmt-version }}
+        run: go install ${PACKAGE_URL}@${PACKAGE_VERSION}
+      - name: Install staticcheck
+        env:
+          PACKAGE_URL: honnef.co/go/tools/cmd/staticcheck
+          PACKAGE_VERSION: ${{ steps.setup-env.outputs.staticcheck-version }}
         run: go install ${PACKAGE_URL}@${PACKAGE_VERSION}
       - name: Install Terraform-docs
         env:
@@ -166,18 +205,25 @@ jobs:
     #     with the value specified by the user.
     #
     #     Scheduled builds are tagged with `:nightly`.
-    name: "Prepare build variables"
-    runs-on: ubuntu-latest
+    name: Prepare build variables
+    needs:
+      - diagnostics
     outputs:
       created: ${{ steps.prep.outputs.created }}
       repometa: ${{ steps.repo.outputs.result }}
       source_version: ${{ steps.prep.outputs.source_version }}
       tags: ${{ steps.prep.outputs.tags }}
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - id: harden-runner
+        name: Harden the runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@v4
       - name: Gather repository metadata
         id: repo
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const repo = await github.rest.repos.get(context.repo)
@@ -228,16 +274,23 @@ jobs:
   build:
     # Builds a single test image for the native platform.  This image is saved
     # as an artifact and loaded by the test job.
-    name: "Build test image"
+    name: Build test image
+    needs:
+      - diagnostics
+      - prepare
     runs-on: ubuntu-latest
-    needs: [prepare]
     steps:
+      - id: harden-runner
+        name: Harden the runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
       - name: Cache Docker layers
         uses: actions/cache@v3
         env:
@@ -251,7 +304,7 @@ jobs:
         run: mkdir -p dist
       - name: Build image
         id: docker_build
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           build-args: |
             VERSION=${{ needs.prepare.outputs.source_version }}
@@ -260,6 +313,11 @@ jobs:
           context: .
           file: ./Dockerfile
           outputs: type=docker,dest=dist/image.tar
+          # Uncomment the following option if you are building an image for use
+          # on Google Cloud Run or AWS Lambda. The current default image output
+          # is unable to run on either. Please see the following issue for more
+          # information: https://github.com/docker/buildx/issues/1533
+          # provenance: false
           tags: ${{ env.IMAGE_NAME }}:latest  # not to be pushed
           # For a list of pre-defined annotation keys and value types see:
           # https://github.com/opencontainers/image-spec/blob/master/annotations.md
@@ -298,11 +356,18 @@ jobs:
         if: env.RUN_TMATE
   test:
     # Executes tests on the single-platform image created in the "build" job.
-    name: "Test image"
+    name: Test image
+    needs:
+      - diagnostics
+      - build
     runs-on: ubuntu-latest
-    needs: [build]
     steps:
-      - uses: actions/checkout@v3
+      - id: harden-runner
+        name: Harden the runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@v4
       - id: setup-python
         uses: actions/setup-python@v4
         with:
@@ -344,32 +409,41 @@ jobs:
     # GitHub Container Registry.  The contents of README.md are pushed as the
     # image's description to Docker Hub.  This job is skipped when the
     # triggering event is a pull request.
-    name: "Build and push all platforms"
-    runs-on: ubuntu-latest
-    needs: [lint, prepare, test]
     if: github.event_name != 'pull_request'
+    name: Build and push all platforms
+    needs:
+      - diagnostics
+      - lint
+      - prepare
+      - test
     # When Dependabot creates a PR it requires this permission in
     # order to push Docker images to ghcr.io.
     permissions:
       packages: write
+    runs-on: ubuntu-latest
     steps:
+      - id: harden-runner
+        name: Harden the runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
       - name: Login to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
       - name: Cache Docker layers
         uses: actions/cache@v3
         env:
@@ -383,7 +457,7 @@ jobs:
         run: ./buildx-dockerfile.sh
       - name: Build and push platform images to registries
         id: docker_build
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           build-args: |
             VERSION=${{ needs.prepare.outputs.source_version }}
@@ -392,6 +466,11 @@ jobs:
           context: .
           file: ./Dockerfile-x
           platforms: ${{ env.PLATFORMS }}
+          # Uncomment the following option if you are building an image for use
+          # on Google Cloud Run or AWS Lambda. The current default image output
+          # is unable to run on either. Please see the following issue for more
+          # information: https://github.com/docker/buildx/issues/1533
+          # provenance: false
           push: true
           tags: ${{ needs.prepare.outputs.tags }}
           # For a list of pre-defined annotation keys and value types see:
