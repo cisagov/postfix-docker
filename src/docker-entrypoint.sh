@@ -71,6 +71,7 @@ if [ "$1" = 'postfix' ]; then
   grep -v '^#\|^$' /run/secrets/users.txt | generate_users
 
   # postfix needs fresh copies of files in its chroot jail
+  mkdir -p /var/spool/postfix/etc/
   cp /etc/{hosts,localtime,nsswitch.conf,resolv.conf,services} /var/spool/postfix/etc/
 
   echo "DKIM DNS entry:"
