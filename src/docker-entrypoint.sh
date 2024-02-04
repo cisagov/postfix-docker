@@ -76,7 +76,7 @@ if [ "$1" = 'postfix' ]; then
   fi
   if [ ! -e /var/spool/postfix/private ] ; then
     mkdir /var/spool/postfix/private
-    chown postfix:postfix /var/spool/postfix/private -R
+    chown postfix:postfix /var/spool/postfix/private
   fi
   cp /etc/{hosts,localtime,nsswitch.conf,resolv.conf,services} /var/spool/postfix/etc/
 
