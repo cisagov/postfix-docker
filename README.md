@@ -12,7 +12,7 @@
 
 Creates a Docker container with an installation of the
 [postfix](http://postfix.org) MTA.  Additionally it has an IMAP
-server ([dovecot](https://dovecot.org)) for accessing the archvies
+server ([dovecot](https://dovecot.org)) for accessing the archives
 of sent email.  All email is BCC'd to the `mailarchive` account.
 
 ## Running ##
