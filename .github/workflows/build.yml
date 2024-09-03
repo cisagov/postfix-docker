@@ -389,7 +389,7 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           pip install --upgrade --requirement requirements-test.txt
       - name: Download docker image artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
         with:
           name: dist
           path: dist
