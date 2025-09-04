@@ -21,7 +21,7 @@ of sent email.  All email is BCC'd to the `mailarchive` account.
 To run the `cisagov/postfix` image via Docker:
 
 ```console
-docker run cisagov/postfix:0.1.1
+docker run cisagov/postfix:0.2.0
 ```
 
 ### Running with Docker Compose ###
@@ -176,7 +176,7 @@ environment variables.  See the
 1. Pull the new image:
 
     ```console
-    docker pull cisagov/postfix:0.1.1
+    docker pull cisagov/postfix:0.2.0
     ```
 
 1. Recreate and run the container by following the [previous instructions](#running-with-docker).
@@ -186,12 +186,12 @@ environment variables.  See the
 The images of this container are tagged with [semantic
 versions](https://semver.org) of the underlying Postfix project that they
 containerize.  It is recommended that most users use a version tag (e.g.
-`:0.1.1`).
+`:0.2.0`).
 
 | Image:tag | Description |
 |-----------|-------------|
-|`cisagov/postfix:0.1.1`| An exact release version. |
-|`cisagov/postfix:0.1`| The most recent release matching the major and minor version numbers. |
+|`cisagov/postfix:0.2.0`| An exact release version. |
+|`cisagov/postfix:0.2`| The most recent release matching the major and minor version numbers. |
 |`cisagov/postfix:0`| The most recent release matching the major version number. |
 |`cisagov/postfix:edge` | The most recent image built from a merge into the `develop` branch of this repository. |
 |`cisagov/postfix:nightly` | A nightly build of the `develop` branch of this repository. |
@@ -248,7 +248,7 @@ Build the image locally using this git repository as the [build context](https:/
 
 ```console
 docker build \
-  --tag cisagov/postfix:0.1.1 \
+  --tag cisagov/postfix:0.2.0 \
   https://github.com/cisagov/postfix-docker.git#develop
 ```
 
@@ -279,7 +279,7 @@ Docker:
       --file Dockerfile-x \
       --platform linux/amd64 \
       --output type=docker \
-      --tag cisagov/postfix:0.1.1 .
+      --tag cisagov/postfix:0.2.0 .
     ```
 
 ## Contributing ##
