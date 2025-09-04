@@ -29,13 +29,13 @@ updates:
       # Managed by cisagov/skeleton-docker
       - dependency-name: actions/download-artifact
       - dependency-name: actions/upload-artifact
-      # - dependency-name: aquasecurity/trivy-action
+      - dependency-name: aquasecurity/trivy-action
       - dependency-name: docker/build-push-action
       - dependency-name: docker/login-action
-      # - dependency-name: docker/metadata-action
+      - dependency-name: docker/metadata-action
       - dependency-name: docker/setup-buildx-action
       - dependency-name: docker/setup-qemu-action
-      # - dependency-name: peter-evans/dockerhub-description
+      - dependency-name: peter-evans/dockerhub-description
     package-ecosystem: github-actions
     schedule:
       interval: weekly
