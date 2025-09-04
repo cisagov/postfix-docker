@@ -1,4 +1,5 @@
 # Already being linted by pretty-format-json
+*.lock
 *.json
 # Already being linted by mdl
 *.md

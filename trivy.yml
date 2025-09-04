@@ -1,0 +1,7 @@
+---
+# Fail if something is flagged
+exit-code: 1
+# Only flag critical and high vulnerabilities
+severity:
+  - CRITICAL
+  - HIGH

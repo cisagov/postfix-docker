@@ -1,0 +1,75 @@
+---
+name: Provide repository metadata
+
+on:  # yamllint disable-line rule:truthy
+  workflow_call:
+    outputs:
+      image-name:
+        description: The name of the Docker image.
+        value: ${{ jobs.output-repo-metadata.outputs.image-name }}
+      image-platforms:
+        description: The supported platforms for the Docker image.
+        value: ${{ jobs.output-repo-metadata.outputs.image-platforms }}
+
+jobs:
+  output-repo-metadata:
+    name: Generate outputs for repository metadata
+    outputs:
+      image-name: ${{ steps.set-outputs.outputs.image-name }}
+      image-platforms: ${{ steps.set-outputs.outputs.image-platforms }}
+    permissions: {}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set outputs for repository metadata
+        id: set-outputs
+        run: |
+          # Standard Python Libraries
+          import json
+          import os
+          import sys
+          from typing import Any, TypedDict
+
+
+          class GhaOutput(TypedDict):
+
+              description: str
+              name: str
+              value: Any
+
+
+          # Every output in this list must be configured as an output for the workflow.
+          gha_outputs: list[GhaOutput] = [
+              {
+                  "description": "The name of the Docker image.",
+                  "name": "image-name",
+                  "value": "cisagov/postfix",
+              },
+              {
+                  "description": "The supported platforms for the Docker image.",
+                  "name": "image-platforms",
+                  "value": [
+                      "linux/386",
+                      "linux/amd64",
+                      "linux/arm/v6",
+                      "linux/arm/v7",
+                      "linux/arm64",
+                      "linux/ppc64le",
+                      # "linux/riscv64",
+                      "linux/s390x",
+                  ],
+              },
+          ]
+
+          if os.getenv("GITHUB_OUTPUT") is None:
+              print(
+                  "GITHUB_OUTPUT is not set. "
+                  "This script is intended to be run in a GitHub Actions environment."
+              )
+              sys.exit(1)
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as gh_output:
+              for output in gha_outputs:
+                  if any(isinstance(output["value"], t) for t in [list, dict]):
+                      output["value"] = json.dumps(output["value"])
+                  gh_output.write(f"{output['name']}={output['value']}\n")
+        shell: python3 {0}
