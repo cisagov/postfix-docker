@@ -2,13 +2,12 @@
 
 [![GitHub Build Status](https://github.com/cisagov/postfix-docker/workflows/build/badge.svg)](https://github.com/cisagov/postfix-docker/actions/workflows/build.yml)
 [![CodeQL](https://github.com/cisagov/postfix-docker/workflows/CodeQL/badge.svg)](https://github.com/cisagov/postfix-docker/actions/workflows/codeql-analysis.yml)
-[![Known Vulnerabilities](https://snyk.io/test/github/cisagov/postfix-docker/badge.svg)](https://snyk.io/test/github/cisagov/postfix-docker)
 
 ## Docker Image ##
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/cisagov/postfix)](https://hub.docker.com/r/cisagov/postfix)
 [![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/cisagov/postfix)](https://hub.docker.com/r/cisagov/postfix)
-[![Platforms](https://img.shields.io/badge/platforms-amd64%20%7C%20arm%2Fv6%20%7C%20arm%2Fv7%20%7C%20arm64%20%7C%20ppc64le%20%7C%20s390x-blue)](https://hub.docker.com/r/cisagov/postfix/tags)
+[![Platforms](https://img.shields.io/badge/platforms-386%20%7C%20amd64%20%7C%20arm%2Fv7%20%7C%20arm64-blue)](https://hub.docker.com/r/cisagov/postfix/tags)
 
 Creates a Docker container with an installation of the
 [postfix](http://postfix.org) MTA.  Additionally it has an IMAP
@@ -22,24 +21,22 @@ of sent email.  All email is BCC'd to the `mailarchive` account.
 To run the `cisagov/postfix` image via Docker:
 
 ```console
-docker run cisagov/postfix:0.0.4
+docker run cisagov/postfix:0.2.0
 ```
 
 ### Running with Docker Compose ###
 
-1. Create a `docker-compose.yml` file similar to the one below to use [Docker Compose](https://docs.docker.com/compose/)
-or use the [sample `docker-compose.yml`](docker-compose.yml) provided with
+1. Create a `compose.yml` file similar to the one below to use [Docker Compose](https://docs.docker.com/compose/)
+or use the [sample `compose.yml`](compose.yml) provided with
 this repository.
 
     ```yaml
     ---
-    version: "3.7"
+    name: postfix-docker
 
     services:
       postfix:
         build:
-          # VERSION must be specified on the command line:
-          # e.g., --build-arg VERSION=0.0.4
           context: .
           dockerfile: Dockerfile
         image: cisagov/postfix
@@ -94,11 +91,11 @@ environment variables.  See the
 - `privkey.pem`
 - `users.txt`
 
-1. Then add the secrets to your `docker-compose.yml` file:
+1. Then add the secrets to your `compose.yml` file:
 
     ```yaml
     ---
-    version: "3.7"
+    name: postfix-docker
 
     secrets:
       fullchain_pem:
@@ -111,8 +108,6 @@ environment variables.  See the
     services:
       postfix:
         build:
-          # VERSION must be specified on the command line:
-          # e.g., --build-arg VERSION=0.0.4
           context: .
           dockerfile: Dockerfile
         image: cisagov/postfix
@@ -181,7 +176,7 @@ environment variables.  See the
 1. Pull the new image:
 
     ```console
-    docker pull cisagov/postfix:0.0.4
+    docker pull cisagov/postfix:0.2.0
     ```
 
 1. Recreate and run the container by following the [previous instructions](#running-with-docker).
@@ -191,12 +186,12 @@ environment variables.  See the
 The images of this container are tagged with [semantic
 versions](https://semver.org) of the underlying Postfix project that they
 containerize.  It is recommended that most users use a version tag (e.g.
-`:0.0.4`).
+`:0.2.0`).
 
 | Image:tag | Description |
 |-----------|-------------|
-|`cisagov/postfix:0.0.4`| An exact release version. |
-|`cisagov/postfix:0.0`| The most recent release matching the major and minor version numbers. |
+|`cisagov/postfix:0.2.0`| An exact release version. |
+|`cisagov/postfix:0.2`| The most recent release matching the major and minor version numbers. |
 |`cisagov/postfix:0`| The most recent release matching the major version number. |
 |`cisagov/postfix:edge` | The most recent image built from a merge into the `develop` branch of this repository. |
 |`cisagov/postfix:nightly` | A nightly build of the `develop` branch of this repository. |
@@ -222,7 +217,7 @@ The following ports are exposed by this container:
 | 587 | Mail submission |
 | 993 | IMAPS |
 
-The sample [Docker composition](docker-compose.yml) publishes the
+The sample [Docker composition](compose.yml) publishes the
 exposed ports at 1025, 1587, and 1993, respectively.
 
 ## Environment variables ##
@@ -253,8 +248,7 @@ Build the image locally using this git repository as the [build context](https:/
 
 ```console
 docker build \
-  --build-arg VERSION=0.0.4 \
-  --tag cisagov/postfix:0.0.4 \
+  --tag cisagov/postfix:0.2.0 \
   https://github.com/cisagov/postfix-docker.git#develop
 ```
 
@@ -284,9 +278,8 @@ Docker:
     docker buildx build \
       --file Dockerfile-x \
       --platform linux/amd64 \
-      --build-arg VERSION=0.0.4 \
       --output type=docker \
-      --tag cisagov/postfix:0.0.4 .
+      --tag cisagov/postfix:0.2.0 .
     ```
 
 ## Contributing ##

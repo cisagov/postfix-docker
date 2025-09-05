@@ -1,4 +1,3 @@
-#!/usr/bin/env pytest -vs
 """Tests for postfix container."""
 
 # Standard Python Libraries
@@ -161,23 +160,18 @@ def test_imap_messages_cleared(username, password):
 @pytest.mark.skipif(
     RELEASE_TAG in [None, ""], reason="this is not a release (RELEASE_TAG not set)"
 )
-def test_release_version():
+def test_release_version(project_version):
     """Verify that release tag version agrees with the module version."""
-    pkg_vars = {}
-    with open(VERSION_FILE) as f:
-        exec(f.read(), pkg_vars)  # nosec
-    project_version = pkg_vars["__version__"]
     assert (
         RELEASE_TAG == f"v{project_version}"
     ), "RELEASE_TAG does not match the project version"
 
 
-def test_container_version_label_matches(main_container):
+@pytest.mark.skipif(
+    RELEASE_TAG in [None, ""], reason="this is not a release (RELEASE_TAG not set)"
+)
+def test_container_version_label_matches(project_version, main_container):
     """Verify the container version label is the correct version."""
-    pkg_vars = {}
-    with open(VERSION_FILE) as f:
-        exec(f.read(), pkg_vars)  # nosec
-    project_version = pkg_vars["__version__"]
     assert (
         main_container.config.labels["org.opencontainers.image.version"]
         == project_version
