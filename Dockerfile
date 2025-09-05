@@ -1,6 +1,6 @@
 # Official Docker images are in the form library/<app> while non-official
 # images are in the form <user>/<app>.
-FROM docker.io/library/debian:bullseye-slim
+FROM docker.io/library/debian:trixie-slim
 
 
 ###
