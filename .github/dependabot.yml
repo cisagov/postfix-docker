@@ -12,11 +12,17 @@ updates:
       interval: weekly
 
   - directory: /
+    package-ecosystem: docker-compose
+    schedule:
+      interval: weekly
+
+  - directory: /
     ignore:
       # Managed by cisagov/skeleton-generic
       - dependency-name: actions/cache
       - dependency-name: actions/checkout
       - dependency-name: actions/dependency-review-action
+      - dependency-name: actions/labeler
       - dependency-name: actions/setup-go
       - dependency-name: actions/setup-python
       - dependency-name: cisagov/action-job-preamble
@@ -36,6 +42,12 @@ updates:
       - dependency-name: docker/setup-buildx-action
       - dependency-name: docker/setup-qemu-action
       - dependency-name: peter-evans/dockerhub-description
+    labels:
+      # dependabot default we need to replicate
+      - dependencies
+      # This matches our label definition in .github/labels.yml as opposed to
+      # dependabot's default of `github_actions`.
+      - github-actions
     package-ecosystem: github-actions
     schedule:
       interval: weekly
