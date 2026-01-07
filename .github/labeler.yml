@@ -16,6 +16,7 @@ dependencies:
   - changed-files:
       - any-glob-to-any-file:
           # Add any dependency files used.
+          - "**/Pipfile*"
           - .pre-commit-config.yaml
           - requirements*.txt
 docker:
@@ -44,6 +45,14 @@ python:
   - changed-files:
       - any-glob-to-any-file:
           - "**/*.py"
+shell script:
+  - changed-files:
+      - any-glob-to-any-file:
+          # If this project has any shell scripts that do not end in the ".sh"
+          # extension, add them below.
+          - "**/*.sh"
+          - bump-version
+          - setup-env
 terraform:
   - changed-files:
       - any-glob-to-any-file:
