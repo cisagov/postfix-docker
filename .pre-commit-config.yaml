@@ -42,8 +42,6 @@ repos:
       - id: pretty-format-json
         args:
           - --autofix
-        # Exclude all Pipfile.lock files
-        exclude: .*/Pipfile\.lock$
       - id: requirements-txt-fixer
       - id: trailing-whitespace
 
