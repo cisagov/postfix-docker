@@ -5,6 +5,8 @@ on:  # yamllint disable-line rule:truthy
   merge_group:
     types:
       - checks_requested
+  # We use the default activity types for the pull_request event as specified here:
+  # https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request
   pull_request:
   push:
     branches:
@@ -40,7 +42,7 @@ env:
   PIP_CACHE_DIR: ~/.cache/pip
   PRE_COMMIT_CACHE_DIR: ~/.cache/pre-commit
   RUN_TMATE: ${{ secrets.RUN_TMATE }}
-  TERRAFORM_DOCS_REPO_BRANCH_NAME: improvement/support_atx_closed_markdown_headers
+  TERRAFORM_DOCS_REPO_BRANCH_NAME: cisagov
   TERRAFORM_DOCS_REPO_DEPTH: 1
   TERRAFORM_DOCS_REPO_URL: https://github.com/mcdonnnj/terraform-docs.git
 
@@ -138,18 +140,20 @@ jobs:
         name: Lookup Go cache directory
         run: |
           echo "dir=$(go env GOCACHE)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         env:
-          BASE_CACHE_KEY: ${{ github.job }}-${{ runner.os }}-\
-            py${{ steps.setup-python.outputs.python-version }}-\
-            go${{ steps.setup-go.outputs.go-version }}-\
-            packer${{ steps.setup-env.outputs.packer-version }}-\
-            tf${{ steps.setup-env.outputs.terraform-version }}-
+          BASE_CACHE_KEY: >-
+            ${{ github.job }}-${{ runner.os
+            }}-py${{ steps.setup-python.outputs.python-version
+            }}-go${{ steps.setup-go.outputs.go-version
+            }}-packer${{ steps.setup-env.outputs.packer-version
+            }}-tf${{ steps.setup-env.outputs.terraform-version }}-
         with:
-          key: ${{ env.BASE_CACHE_KEY }}\
-            ${{ hashFiles('**/requirements-test.txt') }}-\
-            ${{ hashFiles('**/requirements.txt') }}-\
-            ${{ hashFiles('**/.pre-commit-config.yaml') }}
+          key: >-
+            ${{ env.BASE_CACHE_KEY }}${{
+            hashFiles('**/requirements-test.txt') }}-${{
+            hashFiles('**/requirements.txt') }}-${{
+            hashFiles('**/.pre-commit-config.yaml') }}
           # Note that the .terraform directory IS NOT included in the
           # cache because if we were caching, then we would need to use
           # the `-upgrade=true` option. This option blindly pulls down the
@@ -165,12 +169,12 @@ jobs:
       - uses: hashicorp/setup-packer@v3
         with:
           version: ${{ steps.setup-env.outputs.packer-version }}
-      - uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v4
         with:
           terraform_version: ${{ steps.setup-env.outputs.terraform-version }}
       - name: Install go-critic
         env:
-          PACKAGE_URL: github.com/go-critic/go-critic/cmd/gocritic
+          PACKAGE_URL: github.com/go-critic/go-critic/cmd/go-critic
           PACKAGE_VERSION: ${{ steps.setup-env.outputs.go-critic-version }}
         run: go install ${PACKAGE_URL}@${PACKAGE_VERSION}
       - name: Install goimports
@@ -189,10 +193,13 @@ jobs:
           PACKAGE_VERSION: ${{ steps.setup-env.outputs.staticcheck-version }}
         run: go install ${PACKAGE_URL}@${PACKAGE_VERSION}
       # TODO: https://github.com/cisagov/skeleton-generic/issues/165
-      # We are temporarily using @mcdonnnj's forked branch of terraform-docs
-      # until his PR: https://github.com/terraform-docs/terraform-docs/pull/745
-      # is approved. This temporary fix will allow for ATX header support when
-      # terraform-docs is run during linting.
+      # We are temporarily using a branch of @mcdonnnj's fork of terraform-docs that
+      # groups changes from his PRs until they are approved and merged:
+      # https://github.com/terraform-docs/terraform-docs/pull/745
+      # https://github.com/terraform-docs/terraform-docs/pull/901
+      # This temporary fix will allow for ATX header support when terraform-docs is run
+      # during linting and output delimiter rows with cell spacing that passes
+      # Markdownlint's MD060/table-column-style rule.
       - name: Clone ATX headers branch from terraform-docs fork
         run: |
           git clone \
@@ -207,7 +214,7 @@ jobs:
           -o $(go env GOPATH)/bin/terraform-docs
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install --upgrade pip setuptools
           pip install --upgrade --requirement requirements-test.txt
       - name: Set up pre-commit hook environments
         run: pre-commit install-hooks
@@ -267,7 +274,7 @@ jobs:
       - uses: actions/checkout@v6
       - id: generate-metadata
         name: Generate Docker image metadata
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: |
             ${{ needs.repo-metadata.outputs.image-name }}
@@ -326,14 +333,12 @@ jobs:
           # this workflow.
           permissions_monitoring_config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Create dist directory
-        run: mkdir -p dist
+        uses: docker/setup-buildx-action@v4
       - name: Build image
         id: docker_build
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           cache-from: type=gha
           # We use the max mode to cache all layers which includes ones from
@@ -345,7 +350,7 @@ jobs:
           # For a list of pre-defined annotation keys and value types see:
           # https://github.com/opencontainers/image-spec/blob/master/annotations.md
           labels: ${{ needs.prepare.outputs.labels }}
-          outputs: type=docker,dest=dist/image.tar
+          outputs: type=docker,dest=image.tar
           # Uncomment the following option if you are building an image for use
           # on Google Cloud Run or AWS Lambda. The current default image output
           # is unable to run on either. Please see the following issue for more
@@ -353,12 +358,12 @@ jobs:
           # provenance: false
           tags: ${{ needs.repo-metadata.outputs.image-name }}:latest  # not to be pushed
       - name: Compress image
-        run: gzip dist/image.tar
+        run: gzip image.tar
       - name: Upload artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
-          name: dist
-          path: dist
+          archive: false
+          path: image.tar.gz
       - name: Setup tmate debug session
         uses: mxschmitt/action-tmate@v3
         if: env.RUN_TMATE
@@ -400,14 +405,13 @@ jobs:
           # this workflow.
           permissions_monitoring_config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
       - name: Download Docker image artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
-          name: dist
-          path: dist
+          name: image.tar.gz
       - name: Load Docker image
-        run: docker load < dist/image.tar.gz
+        run: docker load < image.tar.gz
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.33.1
+        uses: aquasecurity/trivy-action@0.35.0
         with:
           image-ref: ${{ needs.repo-metadata.outputs.image-name }}:latest
   test:
@@ -455,28 +459,29 @@ jobs:
         with:
           python-version: ${{ steps.setup-env.outputs.python-version }}
       - name: Cache testing environments
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
-          BASE_CACHE_KEY: ${{ github.job }}-${{ runner.os }}-\
-            py${{ steps.setup-python.outputs.python-version }}-
+          BASE_CACHE_KEY: >-
+            ${{ github.job }}-${{ runner.os }}-py${{
+            steps.setup-python.outputs.python-version }}-
         with:
-          key: ${{ env.BASE_CACHE_KEY }}\
-            ${{ hashFiles('**/requirements-test.txt') }}-\
-            ${{ hashFiles('**/requirements.txt') }}
+          key: >-
+            ${{ env.BASE_CACHE_KEY }}${{
+            hashFiles('**/requirements-test.txt') }}-${{
+            hashFiles('**/requirements.txt') }}
           path: ${{ env.PIP_CACHE_DIR }}
           restore-keys: |
             ${{ env.BASE_CACHE_KEY }}
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install --upgrade pip setuptools
           pip install --upgrade --requirement requirements-test.txt
       - name: Download Docker image artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
-          name: dist
-          path: dist
+          name: image.tar.gz
       - name: Load Docker image
-        run: docker load < dist/image.tar.gz
+        run: docker load < image.tar.gz
       - name: Run tests
         env:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
@@ -535,20 +540,20 @@ jobs:
           # this workflow.
           permissions_monitoring_config: ${{ vars.ACTIONS_PERMISSIONS_CONFIG }}
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           password: ${{ secrets.DOCKER_PASSWORD }}
           username: ${{ secrets.DOCKER_USERNAME }}
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: ghcr.io
           username: ${{ github.actor }}
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       # We only build to ensure that the image layers are cached to push later. This is
       # because if the build takes over 10 minutes the token acquired to push to the
       # GitHub Container Registry will have expired. This results in errors like:
@@ -561,7 +566,7 @@ jobs:
       # information.
       - name: Build platform images
         id: docker_build
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           cache-from: type=gha
           # We use the max mode to cache all layers which includes ones from
@@ -584,7 +589,7 @@ jobs:
       # registries.
       - name: Push platform images to registries
         id: docker_push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           cache-from: type=gha
           # We use the max mode to cache all layers which includes ones from
