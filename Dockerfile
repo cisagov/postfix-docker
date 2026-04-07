@@ -64,6 +64,6 @@ COPY src/docker-entrypoint.sh src/version.txt ./
 # Prepare to run
 ###
 VOLUME ["/var/log", "/var/spool/postfix"]
-EXPOSE 25/TCP 587/TCP 993/TCP
+EXPOSE 25/tcp 587/tcp 993/tcp
 ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD ["postfix", "-v", "start-fg"]

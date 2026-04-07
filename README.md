@@ -190,13 +190,13 @@ containerize.  It is recommended that most users use a version tag (e.g.
 `:0.2.0`).
 
 | Image:tag | Description |
-|-----------|-------------|
-|`cisagov/postfix:0.2.0`| An exact release version. |
-|`cisagov/postfix:0.2`| The most recent release matching the major and minor version numbers. |
-|`cisagov/postfix:0`| The most recent release matching the major version number. |
-|`cisagov/postfix:edge` | The most recent image built from a merge into the `develop` branch of this repository. |
-|`cisagov/postfix:nightly` | A nightly build of the `develop` branch of this repository. |
-|`cisagov/postfix:latest`| The most recent release image pushed to a container registry.  Pulling an image using the `:latest` tag [should be avoided.](https://vsupalov.com/docker-latest-tag/) |
+| --------- | ----------- |
+| `cisagov/postfix:0.2.0` | An exact release version. |
+| `cisagov/postfix:0.2` | The most recent release matching the major and minor version numbers. |
+| `cisagov/postfix:0` | The most recent release matching the major version number. |
+| `cisagov/postfix:edge` | The most recent image built from a merge into the `develop` branch of this repository. |
+| `cisagov/postfix:nightly` | A nightly build of the `develop` branch of this repository. |
+| `cisagov/postfix:latest` | The most recent release image pushed to a container registry.  Pulling an image using the `:latest` tag [should be avoided.](https://vsupalov.com/docker-latest-tag/) |
 
 See the [tags tab](https://hub.docker.com/r/cisagov/postfix/tags) on Docker
 Hub for a list of all the supported tags.
@@ -204,7 +204,7 @@ Hub for a list of all the supported tags.
 ## Volumes ##
 
 | Mount point | Purpose |
-|-------------|---------|
+| ----------- | ------- |
 | `/var/log` | System logs |
 | `/var/spool/postfix` | Mail queues |
 
@@ -212,8 +212,8 @@ Hub for a list of all the supported tags.
 
 The following ports are exposed by this container:
 
-| Port | Purpose        |
-|------|----------------|
+| Port | Purpose |
+| ---- | ------- |
 | 25 | SMTP relay |
 | 587 | Mail submission |
 | 993 | IMAPS |
@@ -225,20 +225,20 @@ exposed ports at 1025, 1587, and 1993, respectively.
 
 ### Required ###
 
-| Name  | Purpose |
-|-------|---------|
+| Name | Purpose |
+| ---- | ------- |
 | `PRIMARY_DOMAIN` | The primary domain of the mail server. |
 
 ### Optional ###
 
-| Name  | Purpose | Default |
-|-------|---------|---------|
+| Name | Purpose | Default |
+| ---- | ------- | ------- |
 | `RELAY_IP` | An IP address that is allowed to relay mail without authentication. | `null` |
 
 ## Secrets ##
 
-| Filename     | Purpose |
-|--------------|---------|
+| Filename | Purpose |
+| -------- | ------- |
 | `fullchain.pem` | Public key for the Postfix server. |
 | `privkey.pem` | Private key for the Postfix server. |
 | `users.txt` | Mail account credentials to create at startup. |
