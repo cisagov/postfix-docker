@@ -1,6 +1,6 @@
 # Official Docker images are in the form library/<app> while non-official
 # images are in the form <user>/<app>.
-FROM docker.io/library/debian:bullseye-slim
+FROM docker.io/library/debian:trixie-slim
 
 
 ###
@@ -24,18 +24,18 @@ LABEL org.opencontainers.image.vendor="Cybersecurity and Infrastructure Security
 RUN apt-get update --quiet --quiet \
     && DEBIAN_FRONTEND=noninteractive apt-get install --quiet --quiet --yes \
     --no-install-recommends --no-install-suggests \
-        ca-certificates=20210119 \
-        diceware=0.9.6-1 \
-        dovecot-imapd=1:2.3.13+dfsg1-2+deb11u2 \
-        dovecot-lmtpd=1:2.3.13+dfsg1-2+deb11u2 \
-        gettext-base=0.21-4 \
-        mailutils=1:3.10-3+b1 \
-        opendkim=2.11.0~beta2-4+deb11u1 \
-        opendkim-tools=2.11.0~beta2-4+deb11u1 \
-        opendmarc=1.4.0~beta1+dfsg-6+deb11u1 \
-        postfix=3.5.25-0+deb11u1 \
-        procmail=3.22-26+deb11u1 \
-        sasl2-bin=2.1.27+dfsg-2.1+deb11u1 \
+        ca-certificates=20250419 \
+        diceware=1.0.1-1 \
+        dovecot-imapd=1:2.4.1+dfsg1-6+deb13u5 \
+        dovecot-lmtpd=1:2.4.1+dfsg1-6+deb13u5 \
+        gettext-base=0.23.1-2 \
+        mailutils=1:3.19-1 \
+        opendkim=2.11.0~beta2-9.1+b1 \
+        opendkim-tools=2.11.0~beta2-9.1+b1 \
+        opendmarc=1.4.2-5 \
+        postfix=3.10.5-1~deb13u1 \
+        procmail=3.24+really3.22-4 \
+        sasl2-bin=2.1.28+dfsg1-9 \
     && apt-get --quiet --quiet clean \
     && rm --recursive --force /var/lib/apt/lists/* /tmp/* /var/tmp/*
 

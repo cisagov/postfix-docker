@@ -21,8 +21,8 @@ services:
     init: true
     restart: always
     environment:
-      - PRIMARY_DOMAIN=example.com
-      - RELAY_IP=172.16.202.1/32
+      - PRIMARY_DOMAIN=${PRIMARY_DOMAIN}
+      - RELAY_IP=${RELAY_IP:-172.16.202.1/32}
     networks:
       front:
         ipv4_address: 172.16.202.2
