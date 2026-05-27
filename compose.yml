@@ -28,15 +28,15 @@ services:
         ipv4_address: 172.16.202.2
     ports:
       - target: "25"
-        published: "1025"
+        published: ${SMTP_PORT:-1025}
         protocol: tcp
         mode: host
       - target: "587"
-        published: "1587"
+        published: ${STARTTLS_PORT:-1587}
         protocol: tcp
         mode: host
       - target: "993"
-        published: "1993"
+        published: ${IMAP_PORT:-1993}
         protocol: tcp
         mode: host
     secrets:
