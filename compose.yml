@@ -46,6 +46,11 @@ services:
         target: privkey.pem
       - source: users_txt
         target: users.txt
+    volumes:
+      - postfix-etc:/etc
+      - postfix-home:/home
+      - postfix-root:/root
+      - postfix-var:/var
 
 networks:
   front:
@@ -54,3 +59,8 @@ networks:
       driver: default
       config:
         - subnet: 172.16.202.0/24
+volumes:
+  postfix-etc:
+  postfix-home:
+  postfix-root:
+  postfix-var:
