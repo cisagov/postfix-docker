@@ -26,8 +26,8 @@ RUN apt-get update --quiet --quiet \
     --no-install-recommends --no-install-suggests \
         ca-certificates=20210119 \
         diceware=0.9.6-1 \
-        dovecot-imapd=1:2.3.13+dfsg1-2+deb11u2 \
-        dovecot-lmtpd=1:2.3.13+dfsg1-2+deb11u2 \
+        dovecot-imapd=1:2.3.13+dfsg1-2+deb11u4 \
+        dovecot-lmtpd=1:2.3.13+dfsg1-2+deb11u4 \
         gettext-base=0.21-4 \
         mailutils=1:3.10-3+b1 \
         opendkim=2.11.0~beta2-4+deb11u1 \
