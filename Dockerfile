@@ -26,6 +26,8 @@ RUN apt-get update --quiet --quiet \
     --no-install-recommends --no-install-suggests \
         ca-certificates=20250419 \
         diceware=1.0.1-1 \
+        dovecot-core=1:2.4.1+dfsg1-6+deb13u5 \
+        dovecot-sieve=1:2.4.1+dfsg1-6+deb13u5 \
         dovecot-imapd=1:2.4.1+dfsg1-6+deb13u5 \
         dovecot-lmtpd=1:2.4.1+dfsg1-6+deb13u5 \
         gettext-base=0.23.1-2 \
