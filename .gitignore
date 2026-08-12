@@ -4,9 +4,13 @@
 
 ## Docker ##
 Dockerfile-x
+.env
 
 ## Python ##
 __pycache__
 .mypy_cache
 .pytest_cache
 .python-version
+
+src/secrets/fullchain.pem
+src/secrets/privkey.pem

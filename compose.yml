@@ -21,22 +21,22 @@ services:
     init: true
     restart: always
     environment:
-      - PRIMARY_DOMAIN=example.com
-      - RELAY_IP=172.16.202.1/32
+      - PRIMARY_DOMAIN=${PRIMARY_DOMAIN}
+      - RELAY_IP=${RELAY_IP:-172.16.202.1/32}
     networks:
       front:
         ipv4_address: 172.16.202.2
     ports:
       - target: "25"
-        published: "1025"
+        published: ${SMTP_PORT:-1025}
         protocol: tcp
         mode: host
       - target: "587"
-        published: "1587"
+        published: ${STARTTLS_PORT:-1587}
         protocol: tcp
         mode: host
       - target: "993"
-        published: "1993"
+        published: ${IMAP_PORT:-1993}
         protocol: tcp
         mode: host
     secrets:
@@ -46,6 +46,11 @@ services:
         target: privkey.pem
       - source: users_txt
         target: users.txt
+    volumes:
+      - postfix-etc:/etc
+      - postfix-home:/home
+      - postfix-root:/root
+      - postfix-var:/var
 
 networks:
   front:
@@ -54,3 +59,8 @@ networks:
       driver: default
       config:
         - subnet: 172.16.202.0/24
+volumes:
+  postfix-etc:
+  postfix-home:
+  postfix-root:
+  postfix-var:
