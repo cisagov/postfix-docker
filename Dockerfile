@@ -26,16 +26,16 @@ RUN apt-get update --quiet --quiet \
     --no-install-recommends --no-install-suggests \
         ca-certificates=20250419 \
         diceware=1.0.1-1 \
-        dovecot-core=1:2.4.1+dfsg1-6+deb13u5 \
-        dovecot-sieve=1:2.4.1+dfsg1-6+deb13u5 \
-        dovecot-imapd=1:2.4.1+dfsg1-6+deb13u5 \
-        dovecot-lmtpd=1:2.4.1+dfsg1-6+deb13u5 \
+        dovecot-core=1:2.4.1* \
+        dovecot-sieve=1:2.4.1* \
+        dovecot-imapd=1:2.4.1* \
+        dovecot-lmtpd=1:2.4.1* \
         gettext-base=0.23.1-2 \
         mailutils=1:3.19-1 \
         opendkim=2.11.0~beta2-9.1+b1 \
         opendkim-tools=2.11.0~beta2-9.1+b1 \
         opendmarc=1.4.2-5 \
-        postfix=3.10.5-1~deb13u1 \
+        postfix=3.10.* \
         procmail=3.24+really3.22-4 \
         sasl2-bin=2.1.28+dfsg1-9 \
     && apt-get --quiet --quiet clean \
