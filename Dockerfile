@@ -35,7 +35,7 @@ COPY src/archive.list /etc/apt/sources.list.d/
 RUN apt-get update --quiet --quiet \
     && DEBIAN_FRONTEND=noninteractive apt-get install --quiet --quiet --yes \
     --no-install-recommends --no-install-suggests \
-        ca-certificates=20210119 \
+        ca-certificates=20250419~deb12u1~deb11u1 \
         diceware=0.9.6-1 \
         dovecot-imapd=1:2.3.13+dfsg1-2+deb11u4 \
         dovecot-lmtpd=1:2.3.13+dfsg1-2+deb11u4 \
