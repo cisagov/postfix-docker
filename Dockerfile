@@ -13,6 +13,17 @@ LABEL org.opencontainers.image.authors="vm-fusion-dev-group@trio.dhs.gov"
 LABEL org.opencontainers.image.vendor="Cybersecurity and Infrastructure Security Agency"
 
 ###
+# Remove existing apt SourceList configuration and add in one configured
+# to use the Debian Archive. This is necessary because the Debian Bullseye
+# apt repository was archived.
+#
+# This should be removed once the version of Debian used is upgraded to a newer release.
+# Please see cisagov/postfix-docker#70 for tracking.
+###
+RUN rm /etc/apt/sources.list
+COPY src/archive.list /etc/apt/sources.list.d/
+
+###
 # This Docker container does not use an unprivileged user because it
 # must be able to modify postfix and opendkim config files and
 # therefore must run as root.
@@ -24,7 +35,7 @@ LABEL org.opencontainers.image.vendor="Cybersecurity and Infrastructure Security
 RUN apt-get update --quiet --quiet \
     && DEBIAN_FRONTEND=noninteractive apt-get install --quiet --quiet --yes \
     --no-install-recommends --no-install-suggests \
-        ca-certificates=20210119 \
+        ca-certificates=20250419~deb12u1~deb11u1 \
         diceware=0.9.6-1 \
         dovecot-imapd=1:2.3.13+dfsg1-2+deb11u4 \
         dovecot-lmtpd=1:2.3.13+dfsg1-2+deb11u4 \
